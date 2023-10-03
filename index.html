@@ -1,16 +1,145 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <title>Stay positive</title>
-    <link href="https://fonts.googleapis.com/css2?family=Indie+Flower&display=block" rel="stylesheet">
-    <link href="app.css" rel="stylesheet">
-  </head>
-  <body>
-    <h1 id="quote">
-      <div class="loader"></div>
-    </div>
-    <script src="app.js"></script>
-  </body>
+<html lang="sv">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=10" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kom-hubben</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/contentful@latest/dist/contentful.browser.min.js"></script>
+    <script
+        src="https://cdn.jsdelivr.net/npm/contentful@7.0.5/dist/contentful.browser.min.js" charset="utf-8"></script>
+    <script>
+        var exports = {}; // quick fix because 'exports' is not defined in rich-text bundle below
+    </script>
+    <script
+        src="https://cdn.jsdelivr.net/npm/@contentful/rich-text-html-renderer@12.0.0/dist/rich-text-html-renderer.es5.min.js" charset="utf-8">
+    </script>
+<script
+src="https://code.jquery.com/jquery-3.7.1.min.js"
+integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+crossorigin="anonymous"></script>
+
+
+<script>
+
+    const textRight1 = '<div class="component-news-item--react-news-item" data-focus-item="select-element">\
+            <a href="#" class="image-wrapper">\
+                <div class="image-wrapper__image lazy" data-responsive-background="{&quot;small&quot;:&quot;https://vinnovaextern.acc.vinnova.se/globalassets/mikrosajter/nyhetsrum/bilder/containerhamn_liten.jpg?cb=20201215134722/TeaserSmall&quot;,&quot;medium&quot;:&quot;https://vinnovaextern.acc.vinnova.se/globalassets/mikrosajter/nyhetsrum/bilder/containerhamn_liten.jpg?cb=20201215134722&quot;,&quot;large&quot;:&quot;https://vinnovaextern.acc.vinnova.se/globalassets/mikrosajter/nyhetsrum/bilder/containerhamn_liten.jpg?cb=20201215134722/TeaserFullWidth&quot;}" data-src="https://vinnovaextern.acc.vinnova.se/globalassets/mikrosajter/nyhetsrum/bilder/containerhamn_liten.jpg?cb=20201215134722" data-was-processed="true" style="background-image: url(&quot;https://vinnovaextern.acc.vinnova.se/globalassets/mikrosajter/nyhetsrum/bilder/stadsodling.jpg?cb=20211210091739/TeaserFullWidth&quot;);">\
+                </div>\
+            </a>\
+            <div class="text-wrapper">\
+                <a href="';
+        const textRight2 = '" class="text-wrapper__header element-link element-link--header-link element-link--header-link--grey element-link--header-link--medium">\
+                    <span>';
+        const textRight3 = '</span>\
+                </a>\
+                <p class="text-wrapper__meta-info">15 december 2021</p>\
+                <span class="text-wrapper__text">';
+        const textRight4 = '</span>\
+            </div>\
+        </div>';
+
+        var client = contentful.createClient({
+            space: 'pcxm38nqfovc',
+            accessToken: '4rrfDmsmeP1UXiGkjP_qOnTuhENMmgCsamsy-4mUpU4'
+        });
+
+        // client.getEntry('65pc0m0zMCjAG4jBiQZsgB').then(function (entry) {
+        //     var html = "";
+        //     html += "<div class='row' style='margin:15px 0px;'><div class='col-4'><span style='font-weight:bold;'>Vad kan ni söka för?<br /></span>" + entry.fields.vad + "</div>";
+        //     html += "<div class='col-4' style='background-color:#f0f0f0'><span style='font-weight:bold;'>Vem kan söka?<br /></span>" + entry.fields.vem + "</div>";
+        //     html += "<div class='col-4'><span style='font-weight:bold;'>Hur mycket kan ni söka?<br /></span>" + entry.fields.hurMycket + "</div></div>";
+
+        //     var h1 = document.getElementsByTagName("h1")[0];
+        //     h1.outerHTML = h1.outerHTML + html;
+        // });
+    
+        // Nyhetsbrev
+        client.getEntries(
+                {
+                content_type: "nyhet" ,
+                'metadata.tags.sys.id[in]': "nyhetsbrev"
+            }
+        ).then(function (entries) {
+                // log the title for all the entries that have it
+                entries.items.forEach(function (entry) {
+                    if (entry.fields.rubrik) {
+                        var content = documentToHtmlString(entry.fields.beskrivning);
+                        var textRight = textRight1 + "#" + textRight2 + entry.fields.rubrik + textRight3 + content + textRight4;
+                        $("#nyhetslista").prepend(textRight);
+                    }
+                });
+            });
+
+        // LinkedIn
+        client.getEntries(
+                {
+                content_type: "nyhet" ,
+                'metadata.tags.sys.id[in]': "linkedIn"
+            }
+        ).then(function (entries) {
+                // log the title for all the entries that have it
+                entries.items.forEach(function (entry) {
+                    if (entry.fields.rubrik) {
+                        var content = documentToHtmlString(entry.fields.beskrivning);
+                        var textRight = textRight1 + "#" + textRight2 + entry.fields.rubrik + textRight3 + content + textRight4;
+                        $("#linkedin").prepend(textRight);
+                    }
+                });
+            });
+
+
+    </script>
+    <style>
+        body {
+            padding:20px;
+            background-color:#f0f0f0;
+        }
+
+        .cell-a {
+            padding:20px;
+            background-color: #ffffff;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col">
+              <h1>Kommunikationshubben</h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-5 cell-a">
+                <div class="row">
+                    <div class="col-12">
+                         <h2>Nyheter</h2>
+                         <div id="nyhetslista"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-1">        
+            
+            </div>
+ 
+            <div class="col-md-5 cell-a">
+                <div class="row">
+                    <div class="col-12">
+                         <h2>LinkedIn</h2>
+                         <div id="linkedin"></div>
+                    </div>
+                </div>            </div>
+            <div class="col-md-1">
+            
+            </div>
+          </div>
+      </div>
+
+
+
+</body>
 </html>

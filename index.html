@@ -24,21 +24,26 @@ crossorigin="anonymous"></script>
 
 
 <script>
+var viewType = "Nyhetsbrev";
 
-    const textRight1 = '<div class="component-news-item--react-news-item" data-focus-item="select-element">\
-            <a href="#" class="image-wrapper">\
-                <div class="image-wrapper__image lazy" data-responsive-background="{&quot;small&quot;:&quot;https://vinnovaextern.acc.vinnova.se/globalassets/mikrosajter/nyhetsrum/bilder/containerhamn_liten.jpg?cb=20201215134722/TeaserSmall&quot;,&quot;medium&quot;:&quot;https://vinnovaextern.acc.vinnova.se/globalassets/mikrosajter/nyhetsrum/bilder/containerhamn_liten.jpg?cb=20201215134722&quot;,&quot;large&quot;:&quot;https://vinnovaextern.acc.vinnova.se/globalassets/mikrosajter/nyhetsrum/bilder/containerhamn_liten.jpg?cb=20201215134722/TeaserFullWidth&quot;}" data-src="https://vinnovaextern.acc.vinnova.se/globalassets/mikrosajter/nyhetsrum/bilder/containerhamn_liten.jpg?cb=20201215134722" data-was-processed="true" style="background-image: url(&quot;https://vinnovaextern.acc.vinnova.se/globalassets/mikrosajter/nyhetsrum/bilder/stadsodling.jpg?cb=20211210091739/TeaserFullWidth&quot;);">\
-                </div>\
-            </a>\
+    const textRight1 = '<div id="';
+    const textRight2 = '" class="item-section ';
+    const textRight3 = '">\
+            <div class="selectors"><button class="hide">Göm/Visa</button><button class="choose">Välj</button></div>\
             <div class="text-wrapper">\
-                <a href="';
-        const textRight2 = '" class="text-wrapper__header element-link element-link--header-link element-link--header-link--grey element-link--header-link--medium">\
-                    <span>';
-        const textRight3 = '</span>\
-                </a>\
-                <p class="text-wrapper__meta-info">15 december 2021</p>\
-                <span class="text-wrapper__text">';
-        const textRight4 = '</span>\
+                <span class="label">';
+        const textRight4 = '</span><span href="';
+        const textRight5 = '" class="">\
+                    <h3>';
+        const textRight6 = '</h3>\
+                </span>\
+                <div class="content">\
+                <p class="text-wrapper__meta-info">'
+        const textRight7 = '</p><p>';
+        const textRight8 = '</p><button class="show-content">+/-</button>\
+                <span class="text-wrapper__text"  style="display:none;"">';
+        const textRight9 = '</span>\
+                    </div>\
             </div>\
         </div>';
 
@@ -47,49 +52,109 @@ crossorigin="anonymous"></script>
             accessToken: '4rrfDmsmeP1UXiGkjP_qOnTuhENMmgCsamsy-4mUpU4'
         });
 
-        // client.getEntry('65pc0m0zMCjAG4jBiQZsgB').then(function (entry) {
-        //     var html = "";
-        //     html += "<div class='row' style='margin:15px 0px;'><div class='col-4'><span style='font-weight:bold;'>Vad kan ni söka för?<br /></span>" + entry.fields.vad + "</div>";
-        //     html += "<div class='col-4' style='background-color:#f0f0f0'><span style='font-weight:bold;'>Vem kan söka?<br /></span>" + entry.fields.vem + "</div>";
-        //     html += "<div class='col-4'><span style='font-weight:bold;'>Hur mycket kan ni söka?<br /></span>" + entry.fields.hurMycket + "</div></div>";
+        function addEventListeners()
+        {
+            $(".choose").click(function(e) {
+                        var listId = e.target.parentNode.parentNode.parentNode.id;
+                        var listTagId = listId == "nyhetsbrev" ? "nyhetslista" : "nyhetsbrev";
+                        var $itemHtml = $(e.target.parentNode.parentNode);
+                        e.target.parentNode.parentNode.outerHTML = "";
+                        $("#"+ listTagId).prepend($itemHtml);
+                    });
 
-        //     var h1 = document.getElementsByTagName("h1")[0];
-        //     h1.outerHTML = h1.outerHTML + html;
-        // });
-    
-        // Nyhetsbrev
-        client.getEntries(
-                {
-                content_type: "nyhet" ,
-                'metadata.tags.sys.id[in]': "nyhetsbrev"
+                    $(".hide").click(function(e) {
+                        $item = $(e.target.parentNode.parentNode);
+                        $item.find(".choose").toggle();
+                        $item.find(".content").toggle();
+                    });
+
+                    $(".show-content").click(function(e) {
+                        $item = $(e.target).next().toggle();
+                    })
+        }
+
+        function fetchEntries() {
+            // Nyhetsbrev
+            // LinkedIn
+
+            var channelSelections = "nyhetsbrev";
+            $("#source-heading").text("Nyheter och erbjudanden med nyhetsbrevs-tagg");
+            $("#report-heading").text("Underlag till nyhetsbrev");
+
+            if(viewType == "LinkedIn") {
+                channelSelections = "linkedIn"
+                $("#source-heading").text("Nyheter och erbjudanden med LinkedIn-tagg");
+                $("#report-heading").text("Material till LinkedIn");
             }
-        ).then(function (entries) {
+
+            client.getEntries(
+                {
+                'sys.contentType.sys.id[in]': "nyhet,erbjudande",
+                'metadata.tags.sys.id[in]': channelSelections
+            }
+            ).then(function (entries) {
                 // log the title for all the entries that have it
                 entries.items.forEach(function (entry) {
-                    if (entry.fields.rubrik) {
-                        var content = documentToHtmlString(entry.fields.beskrivning);
-                        var textRight = textRight1 + "#" + textRight2 + entry.fields.rubrik + textRight3 + content + textRight4;
-                        $("#nyhetslista").prepend(textRight);
+                    var cssklass = '';
+                    var etikett = '';
+                    var rubrik = '';
+                    var content = '';
+                    var puffText = '';
+                    var someText = '';
+                    var someTextHtml = '';
+                    if (entry.sys.contentType.sys.id == 'nyhet') {
+                        cssklass = "item-news";
+                        etikett = "Nyhet";
+                        rubrik = entry.fields.rubrik;
+                        content = documentToHtmlString(entry.fields.beskrivning);
+                        puffText = entry.fields.pufftext ?? $(content).text();
+                        someText = entry.fields.someText ?? "";
+                    } else if(entry.sys.contentType.sys.id == 'erbjudande') {
+                        cssklass = "item-offering";
+                        etikett = "Erbjudande";
+                        rubrik = entry.fields.rubrik;
+                        content = documentToHtmlString(entry.fields.utlysningstext);
+                        puffText = entry.fields.pufftext ?? $(content).text().substring(0, 300);
+                        someText = entry.fields.someText ?? "";
                     }
+                    if(viewType == "LinkedIn") {
+                        someTextHtml =  "<br /><span class='sometext'>Some: " + someText + "</span>";
+                    } 
+                    var textRight = textRight1 + entry.sys.id + 
+                        textRight2 + cssklass +
+                        textRight3 + etikett +
+                        textRight4 + "#" + 
+                        textRight5 + rubrik + 
+                        textRight6 + "2023-10-30" + 
+                        textRight7 + puffText + someTextHtml +
+                        textRight8 + content +
+                        textRight9;
+                    $("#nyhetslista").prepend(textRight);
+                    
                 });
-            });
 
-        // LinkedIn
-        client.getEntries(
-                {
-                content_type: "nyhet" ,
-                'metadata.tags.sys.id[in]': "linkedIn"
-            }
-        ).then(function (entries) {
-                // log the title for all the entries that have it
-                entries.items.forEach(function (entry) {
-                    if (entry.fields.rubrik) {
-                        var content = documentToHtmlString(entry.fields.beskrivning);
-                        var textRight = textRight1 + "#" + textRight2 + entry.fields.rubrik + textRight3 + content + textRight4;
-                        $("#linkedin").prepend(textRight);
-                    }
-                });
+                addEventListeners();
             });
+        }
+        
+        $(document).ready(function() {
+            $("h1").click(function() {
+                if(viewType == "Nyhetsbrev") {
+                    viewType = "LinkedIn";
+                    $(".cell-a").css("background-color", "#fce8ce");
+                } else {
+                    viewType = "Nyhetsbrev";
+                    $(".cell-a").css("background-color", "#ffffff");
+                }         
+                $("#nyhetslista").html("");
+                $("#nyhetsbrev").html("");
+                
+
+                fetchEntries();       
+            })
+
+            fetchEntries();
+        });
 
 
     </script>
@@ -99,9 +164,62 @@ crossorigin="anonymous"></script>
             background-color:#f0f0f0;
         }
 
+        h1:hover {
+            cursor: pointer;
+        }
+
+        h2 {
+            font-size:20px;
+        }
+
+        h3 {
+            font-size:16px;
+        }
+
         .cell-a {
             padding:20px;
             background-color: #ffffff;
+        }
+
+        .item-section {
+            margin-bottom:20px;
+            background-color: #f9f9f9;
+            padding:10px;
+        }
+        .selectors {
+            position:relative;
+            right: 0px;
+            float:right;
+        }
+        .selectors button {
+            margin-right:5px;
+        }
+        button.show-content {
+            position:relative;
+            right: 0px;
+            margin-top:-20px;            
+            float:right;
+            font-size:12px;
+        }
+        .label {
+            font-size:12px;
+        }
+        .item-news {
+            background-color: lightgreen;
+        }
+       .item-offering {
+            background-color: lightblue;
+        }
+        .text-wrapper__text {
+            font-size:10px;
+        }
+        .sometext {
+            font-size: 14px;
+            font-style: italic;
+            font-weight: 600;
+            display:inline-block;
+            margin-top:15px;
+            line-height:18px;
         }
     </style>
 </head>
@@ -117,7 +235,7 @@ crossorigin="anonymous"></script>
             <div class="col-md-5 cell-a">
                 <div class="row">
                     <div class="col-12">
-                         <h2>Nyheter</h2>
+                         <h2 id="source-heading">Nyheter och erbjudanden med LinkedIn-tagg</h2>
                          <div id="nyhetslista"></div>
                     </div>
                 </div>
@@ -129,8 +247,8 @@ crossorigin="anonymous"></script>
             <div class="col-md-5 cell-a">
                 <div class="row">
                     <div class="col-12">
-                         <h2>LinkedIn</h2>
-                         <div id="linkedin"></div>
+                         <h2 id="report-heading">Underlag till nyhetsbrev</h2>
+                         <div id="nyhetsbrev"></div>
                     </div>
                 </div>            </div>
             <div class="col-md-1">

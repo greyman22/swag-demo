@@ -48,7 +48,7 @@ button.show-content {
 
 }
 .label {
-    font-size:10px;
+    font-size:12px;
     font-style: italic;
 }
 .item-news {
@@ -57,11 +57,14 @@ button.show-content {
 .item-offering {
     background-color: lightblue;
 }
+.item-webpage {
+    background-color: rgb(243, 204, 253);
+}
 .text-wrapper__text {
-    font-size:10px;
+    font-size:12px;
 }
 .text-wrapper__text p {
-    margin-top:10px;
+    margin-top:12px;
 }
 .sometext {
     font-size: 14px;
@@ -73,7 +76,7 @@ button.show-content {
 }
 .campaign-label {
     display:inline-block;
-    font-size:10px;
+    font-size:12px;
     padding:2px;
     background-color: #f8f3c2;
 }
@@ -82,7 +85,7 @@ button.show-content {
     border-radius: 5px;
 }
 .utm-links {
-    margin-top: 10px;
+    margin-top: 12px;
     display: inline-block;
     border:solid 1px #f0f0f0;
     width:100%;

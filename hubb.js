@@ -65,20 +65,20 @@ const textRight3 = '">\
         // LinkedIn
 
         var channelSelections = "nyhetsbrev";
-        $("#source-heading").text("Nyheter och erbjudanden med nyhetsbrevs-tagg");
+        $("#source-heading").text("Kandidater att ta med i nyhetsbrev");
         $("#report-heading").text("Underlag till nyhetsbrev");
         $("#linkedin-logo").hide();
 
         if(viewType == "LinkedIn") {
             channelSelections = "linkedIn"
-            $("#source-heading").text("Nyheter och erbjudanden med LinkedIn-tagg");
+            $("#source-heading").text("Kandidater att visa på LinkedIn");
             $("#report-heading").text("Material till LinkedIn");
             $("#linkedin-logo").show();
         }
 
         client.getEntries(
             {
-            'sys.contentType.sys.id[in]': "nyhet,erbjudande",
+            'sys.contentType.sys.id[in]': "nyhet,erbjudande,webbsida",
             'metadata.tags.sys.id[in]': channelSelections
         }
         ).then(function (entries) {
@@ -117,7 +117,18 @@ const textRight3 = '">\
                     kampanjreferenser = entry.fields.kampanjreferenser;
                     utmlankText = entry.fields.rubrik;
                     utmlankUrl = "http://vinnova.se/e/" + entry.fields.diarienummer + "/";
+                } else if(entry.sys.contentType.sys.id == 'webbsida') {
+                    cssklass = "item-webpage";
+                    etikett = "Webbsida";
+                    rubrik = entry.fields.rubrik;
+                    contentHtml = documentToHtmlString(entry.fields.sidinnehall);
+                    puffText = entry.fields.pufftext ?? $(contentHtml).text().substring(0, 300);
+                    someText = entry.fields.someText ?? "";
+                    kampanjreferenser = entry.fields.kampanjreferenser;
+                    utmlankText = entry.fields.rubrik;
+                    utmlankUrl = "http://vinnova.se/entries/"  + entry.sys.id + "/";
                 }
+
 
                 var kampanjNamn = "";
                 if(kampanjreferenser && kampanjreferenser.length > 0) {

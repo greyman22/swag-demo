@@ -19,6 +19,17 @@
     </script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
 
+<script>
+            var key = "";        
+        if(document.cookie == "") {
+            key = prompt("Ange accessToken för Contentful");
+            document.cookie = "cf_accessToken=" + key + "; expires=Thu, 18 Dec 2043 12:00:00 UTC";
+       }
+       else {
+            key = document.cookie.split(';')[0].split('=')[1];
+       }
+</script>
+
     <script src="hubb.js"></script>
     <link href="hubb.css" rel="stylesheet">
 
@@ -41,6 +52,7 @@ var getUrlParameter = function getUrlParameter(sParam) {
 };
 
     $(document).ready(function() {
+ 
         $("#main").hide();
         $("#hubb").hide();
         $("#entry").hide();

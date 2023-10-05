@@ -24,7 +24,7 @@ const textRight3 = '">\
 
     var client = contentful.createClient({
         space: 'pcxm38nqfovc',
-        accessToken: '4rrfDmsmeP1UXiGkjP_qOnTuhENMmgCsamsy-4mUpU4'
+        accessToken: key
     });
 
     function addListEventListeners()

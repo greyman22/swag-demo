@@ -17,218 +17,81 @@
     <script
         src="https://cdn.jsdelivr.net/npm/@contentful/rich-text-html-renderer@12.0.0/dist/rich-text-html-renderer.es5.min.js" charset="utf-8">
     </script>
-<script
-src="https://code.jquery.com/jquery-3.7.1.min.js"
-integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
-crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
 
+    <script src="hubb.js"></script>
+    <link href="hubb.css" rel="stylesheet">
 
-<script>
-var viewType = "Nyhetsbrev";
+    <script>
 
-    const textRight1 = '<div id="';
-    const textRight2 = '" class="item-section ';
-    const textRight3 = '">\
-            <div class="selectors"><button class="hide">Göm/Visa</button><button class="choose">Välj</button></div>\
-            <div class="text-wrapper">\
-                <span class="label">';
-        const textRight4 = '</span><span href="';
-        const textRight5 = '" class="">\
-                    <h3>';
-        const textRight6 = '</h3>\
-                </span>\
-                <div class="content">\
-                <p class="text-wrapper__meta-info">'
-        const textRight7 = '</p><p>';
-        const textRight8 = '</p><button class="show-content">+/-</button>\
-                <span class="text-wrapper__text"  style="display:none;"">';
-        const textRight9 = '</span>\
-                    </div>\
-            </div>\
-        </div>';
+var getUrlParameter = function getUrlParameter(sParam) {
+    var sPageURL = window.location.search.substring(1),
+        sURLVariables = sPageURL.split('&'),
+        sParameterName,
+        i;
 
-        var client = contentful.createClient({
-            space: 'pcxm38nqfovc',
-            accessToken: '4rrfDmsmeP1UXiGkjP_qOnTuhENMmgCsamsy-4mUpU4'
-        });
+    for (i = 0; i < sURLVariables.length; i++) {
+        sParameterName = sURLVariables[i].split('=');
 
-        function addEventListeners()
-        {
-            $(".choose").click(function(e) {
-                        var listId = e.target.parentNode.parentNode.parentNode.id;
-                        var listTagId = listId == "nyhetsbrev" ? "nyhetslista" : "nyhetsbrev";
-                        var $itemHtml = $(e.target.parentNode.parentNode);
-                        e.target.parentNode.parentNode.outerHTML = "";
-                        $("#"+ listTagId).prepend($itemHtml);
-                    });
-
-                    $(".hide").click(function(e) {
-                        $item = $(e.target.parentNode.parentNode);
-                        $item.find(".choose").toggle();
-                        $item.find(".content").toggle();
-                    });
-
-                    $(".show-content").click(function(e) {
-                        $item = $(e.target).next().toggle();
-                    })
+        if (sParameterName[0] === sParam) {
+            return sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
         }
+    }
+    return false;
+};
 
-        function fetchEntries() {
-            // Nyhetsbrev
-            // LinkedIn
+    $(document).ready(function() {
+        $("#main").hide();
+        $("#hubb").hide();
+        $("#entry").hide();
 
-            var channelSelections = "nyhetsbrev";
-            $("#source-heading").text("Nyheter och erbjudanden med nyhetsbrevs-tagg");
-            $("#report-heading").text("Underlag till nyhetsbrev");
 
-            if(viewType == "LinkedIn") {
-                channelSelections = "linkedIn"
-                $("#source-heading").text("Nyheter och erbjudanden med LinkedIn-tagg");
-                $("#report-heading").text("Material till LinkedIn");
-            }
-
-            client.getEntries(
-                {
-                'sys.contentType.sys.id[in]': "nyhet,erbjudande",
-                'metadata.tags.sys.id[in]': channelSelections
-            }
-            ).then(function (entries) {
-                // log the title for all the entries that have it
-                entries.items.forEach(function (entry) {
-                    var cssklass = '';
-                    var etikett = '';
-                    var rubrik = '';
-                    var content = '';
-                    var puffText = '';
-                    var someText = '';
-                    var someTextHtml = '';
-                    if (entry.sys.contentType.sys.id == 'nyhet') {
-                        cssklass = "item-news";
-                        etikett = "Nyhet";
-                        rubrik = entry.fields.rubrik;
-                        content = documentToHtmlString(entry.fields.beskrivning);
-                        puffText = entry.fields.pufftext ?? $(content).text();
-                        someText = entry.fields.someText ?? "";
-                    } else if(entry.sys.contentType.sys.id == 'erbjudande') {
-                        cssklass = "item-offering";
-                        etikett = "Erbjudande";
-                        rubrik = entry.fields.rubrik;
-                        content = documentToHtmlString(entry.fields.utlysningstext);
-                        puffText = entry.fields.pufftext ?? $(content).text().substring(0, 300);
-                        someText = entry.fields.someText ?? "";
-                    }
-                    if(viewType == "LinkedIn") {
-                        someTextHtml =  "<br /><span class='sometext'>Some: " + someText + "</span>";
-                    } 
-                    var textRight = textRight1 + entry.sys.id + 
-                        textRight2 + cssklass +
-                        textRight3 + etikett +
-                        textRight4 + "#" + 
-                        textRight5 + rubrik + 
-                        textRight6 + "2023-10-30" + 
-                        textRight7 + puffText + someTextHtml +
-                        textRight8 + content +
-                        textRight9;
-                    $("#nyhetslista").prepend(textRight);
-                    
-                });
-
-                addEventListeners();
-            });
+        var entryId = getUrlParameter("entryId");
+        if(entryId) {
+            $("#entry").show();
         }
-        
-        $(document).ready(function() {
-            $("h1").click(function() {
-                if(viewType == "Nyhetsbrev") {
-                    viewType = "LinkedIn";
-                    $(".cell-a").css("background-color", "#fce8ce");
-                } else {
-                    viewType = "Nyhetsbrev";
-                    $(".cell-a").css("background-color", "#ffffff");
-                }         
-                $("#nyhetslista").html("");
-                $("#nyhetsbrev").html("");
-                
+        else {
 
-                fetchEntries();       
+            $("#main").show();
+            $("#start-simulator").click(function() {
+                $("#main").hide();
+                $("#hubb").show();
             })
-
-            fetchEntries();
-        });
-
-
+        }
+    });
     </script>
-    <style>
-        body {
-            padding:20px;
-            background-color:#f0f0f0;
-        }
-
-        h1:hover {
-            cursor: pointer;
-        }
-
-        h2 {
-            font-size:20px;
-        }
-
-        h3 {
-            font-size:16px;
-        }
-
-        .cell-a {
-            padding:20px;
-            background-color: #ffffff;
-        }
-
-        .item-section {
-            margin-bottom:20px;
-            background-color: #f9f9f9;
-            padding:10px;
-        }
-        .selectors {
-            position:relative;
-            right: 0px;
-            float:right;
-        }
-        .selectors button {
-            margin-right:5px;
-        }
-        button.show-content {
-            position:relative;
-            right: 0px;
-            margin-top:-20px;            
-            float:right;
-            font-size:12px;
-        }
-        .label {
-            font-size:12px;
-        }
-        .item-news {
-            background-color: lightgreen;
-        }
-       .item-offering {
-            background-color: lightblue;
-        }
-        .text-wrapper__text {
-            font-size:10px;
-        }
-        .sometext {
-            font-size: 14px;
-            font-style: italic;
-            font-weight: 600;
-            display:inline-block;
-            margin-top:15px;
-            line-height:18px;
-        }
-    </style>
 </head>
 
 <body>
-    <div class="container">
+    <div id="entry" class="container">
+        <div class="row">
+            <div class="col-md-12 cell-a">
+
+                <h1>Ett objekt</h1>
+            </div>
+        </div>
+    </div>
+    <div id="main" class="container">
+        <div class="row">
+            <div class="col-md-12 cell-a">
+
+                <h1>Vinnovas resa mot headless och portföljhantering</h1>
+                <p>I korthet är idén, all information för kommunikation samlas på ett ställe. Arbetet sker via kampanjer. 
+                    I varje kampanj väljs de bästa kommunikationskanalerna ut. Inte alla. Bara de som ger bäst effekt. </p>
+                <p>I förlängningen arbetar vi med en omnikanal där våra kunder och besökare automatiskt nås av rätt budskap.</p>
+                <p style="text-align:center;"><a href="https://app.contentful.com/spaces/pcxm38nqfovc/home" target="_new">Öppna Contentful</a>&nbsp;&nbsp;&nbsp;
+                    <a href="https://vinnovaextern.acc.vinnova.se/forvaltning/demo/nyheter-headless/" target="_new">Nyhetslista 'vinnova.se'</a>&nbsp;&nbsp;&nbsp;
+                    <a href="#" id="start-simulator">Starta Kom-hubb simulatorn</a></p>
+                <p><img src="kanalexempel.png" style="width:100%"></p>
+            </div>
+        </div>
+    </div>
+</div>
+    </div>
+    <div id="hubb" class="container" style="display:none;">
         <div class="row">
             <div class="col">
-              <h1>Kommunikationshubben</h1>
+              <h1>Kommunikationshubben <img id="linkedin-logo" src="linkedin.png"></h1>
             </div>
         </div>
         <div class="row">
@@ -239,6 +102,12 @@ var viewType = "Nyhetsbrev";
                          <div id="nyhetslista"></div>
                     </div>
                 </div>
+                <div class="row">
+                    <div class="col-12">
+                        <button id="mark-hidden-as-done">Markera gömda som åtgärdade</button>
+                    </div>
+                </div>
+
             </div>
             <div class="col-md-1">        
             
@@ -250,9 +119,14 @@ var viewType = "Nyhetsbrev";
                          <h2 id="report-heading">Underlag till nyhetsbrev</h2>
                          <div id="nyhetsbrev"></div>
                     </div>
-                </div>            </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <button id="mark-as-done">Markera som åtgärdade</button>
+                    </div>
+                </div>
+            </div>
             <div class="col-md-1">
-            
             </div>
           </div>
       </div>

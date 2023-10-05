@@ -1,0 +1,108 @@
+body {
+    padding:20px;
+    background-color:#f0f0f0;
+}
+
+h1 {
+    margin-bottom:20px;
+}
+
+h1:hover {
+    cursor: pointer;
+}
+
+h2 {
+    font-size:20px;
+}
+
+h3 {
+    font-size:16px;
+}
+
+.cell-a {
+    padding:20px;
+    background-color: #ffffff;
+}
+
+.item-section {
+    margin-bottom:20px;
+    background-color: #f9f9f9;
+    padding:10px;
+}
+.selectors {
+    position:relative;
+    right: 0px;
+    float:right;
+}
+.selectors button {
+    margin-right:5px;
+    border-radius: 5px;
+}
+button.show-content {
+    position:relative;
+    right: 0px;
+    margin-top:0px;            
+    float:right;
+    font-size:12px;
+    border-radius: 5px;
+
+}
+.label {
+    font-size:10px;
+    font-style: italic;
+}
+.item-news {
+    background-color: lightgreen;
+}
+.item-offering {
+    background-color: lightblue;
+}
+.text-wrapper__text {
+    font-size:10px;
+}
+.text-wrapper__text p {
+    margin-top:10px;
+}
+.sometext {
+    font-size: 14px;
+    font-style: italic;
+    font-weight: 600;
+    display:inline-block;
+    margin-top:15px;
+    line-height:18px;
+}
+.campaign-label {
+    display:inline-block;
+    font-size:10px;
+    padding:2px;
+    background-color: #f8f3c2;
+}
+#mark-as-done, #mark-hidden-as-done{
+    float:right;
+    border-radius: 5px;
+}
+.utm-links {
+    margin-top: 10px;
+    display: inline-block;
+    border:solid 1px #f0f0f0;
+    width:100%;
+    padding:5px;
+}
+
+.copy-button {
+    margin-left: 5px;
+    font-size:8px;
+    border-radius: 5px;
+}
+
+#nyhetslista .copy-button {
+    display:none;
+}
+
+#nyhetsbrev .hide {
+    display:none;
+}
+
+.hidden {
+    opacity: 0.3;
+}

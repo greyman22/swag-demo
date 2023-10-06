@@ -20,14 +20,41 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
 
 <script>
-            var key = "";        
-        if(document.cookie == "") {
-            key = prompt("Ange accessToken för Contentful");
-            document.cookie = "cf_accessToken=" + key + "; expires=Thu, 18 Dec 2043 12:00:00 UTC";
-       }
-       else {
-            key = document.cookie.split(';')[0].split('=')[1];
-       }
+    function setCookie(cname, cvalue, exdays) {
+        const d = new Date();
+        d.setTime(d.getTime() + (exdays*24*60*60*1000));
+        let expires = "expires="+ d.toUTCString();
+        document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+    }
+
+    function getCookie(cname) {
+        let name = cname + "=";
+        let decodedCookie = decodeURIComponent(document.cookie);
+        let ca = decodedCookie.split(';');
+        for(let i = 0; i <ca.length; i++) {
+            let c = ca[i];
+            while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+            }
+            if (c.indexOf(name) == 0) {
+            return c.substring(name.length, c.length);
+            }
+        }
+        return "";
+        }
+
+
+    var key = "";        
+    var accessTokenCookieValue = getCookie("cf_accessToken");
+    if(accessTokenCookieValue) {
+        key = accessTokenCookieValue;
+    }
+    else {
+        key = prompt("Ange accessToken för Contentful");
+        setCookie("cf_accessToken",key,365);
+
+        //        document.cookie = "cf_accessToken=" + key + "; expires=Thu, 18 Dec 2043 12:00:00 UTC";
+    }
 </script>
 
     <script src="hubb.js"></script>
@@ -56,6 +83,27 @@ var getUrlParameter = function getUrlParameter(sParam) {
         $("#main").hide();
         $("#hubb").hide();
         $("#entry").hide();
+        $("#kanal-exempel").hide();
+
+        $("#kanal-exempel").click(function() {
+            $("#kanal-exempel").hide();
+            $("#overgripande").show();
+        });
+
+        $("#l-overgripande").click(function() {
+            $("#kanal-exempel").hide();
+            $("#overgripande").show();
+        });
+
+        $("#overgripande").click(function() {
+            $("#kanal-exempel").show();
+            $("#overgripande").hide();
+        });
+
+        $("#l-kanal-exempel").click(function() {
+            $("#kanal-exempel").show();
+            $("#overgripande").hide();
+        });
 
 
         var entryId = getUrlParameter("entryId");
@@ -86,14 +134,46 @@ var getUrlParameter = function getUrlParameter(sParam) {
     <div id="main" class="container">
         <div class="row">
             <div class="col-md-12 cell-a">
-
-                <h1>Vinnovas resa mot headless och portföljhantering</h1>
-                <p>I korthet är idén, all information för kommunikation samlas på ett ställe. Arbetet sker via kampanjer. 
-                    I varje kampanj väljs de bästa kommunikationskanalerna ut. Inte alla. Bara de som ger bäst effekt. </p>
-                <p>I förlängningen arbetar vi med en omnikanal där våra kunder och besökare automatiskt nås av rätt budskap.</p>
-                <p style="text-align:center;"><a href="https://app.contentful.com/spaces/pcxm38nqfovc/home" target="_new">Öppna Contentful</a>&nbsp;&nbsp;&nbsp;
-                    <a href="https://vinnovaextern.acc.vinnova.se/forvaltning/demo/nyheter-headless/" target="_new">Nyhetslista 'vinnova.se'</a>&nbsp;&nbsp;&nbsp;
-                    <a href="#" id="start-simulator">Starta Kom-hubb simulatorn</a></p>
+                <h1>Vår resa mot headless och portföljhantering</h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3 cell-a">
+                <ul>
+                    <li><a href="#" id="l-overgripande">Övergripande kanalflöde</a></li>
+                    <li><a href="#" id="l-kanal-exempel">Exempel på kanalval</a></li>
+                    <li><a href="#" id="start-simulator">Starta Kom-hubb simulatorn</a></li>
+                    <li><a href="https://app.contentful.com/spaces/pcxm38nqfovc/home" target="_new">Öppna Contentful (ny flik)</a></li>
+                    <li><a href="https://vinnovaextern.acc.vinnova.se/forvaltning/demo/nyheter-headless/" target="_new">Nyhetslista 'vinnova.se' (ny flik)</a></li>
+                </ul>
+                </div>
+            <div class="col-md-6 cell-a">
+                <p>I korthet är idén att all information för kommunikation samlas på ett ställe. 
+                    Arbetet sker via kampanjer. 
+                    I varje kampanj väljs de bästa kommunikationskanalerna ut. Inte alla. 
+                    Bara de som ger bäst effekt för en viss målgrupp.</p>
+                    <p>Vi arbetar mot projektmålen via de övergripande målen Finansiering, Expertstöd och Mobilisering.
+                        FEM-målen blir i praktiken basen för våra metodval.
+                    </p>
+                <p>I förlängningen arbetar vi med en omnikanal där kunder och besökare i våra olika målgrupper automatiskt nås av rätt budskap.</p>
+            </div>
+            <div class="col-md-3 cell-a">
+            </div>
+        </div>
+        <div class="row" id="overgripande">
+            <div class="col-md-12 cell-a">
+                <h2>Övergripande arbetsflöde</h2>
+                <p><img src="overgripande-arbetsflode.png" style="width:100%"></p>
+            </div>
+        </div>
+        <div class="row" id="kanal-exempel">
+            <div class="col-md-12 cell-a">
+                <h2>Exempel på material och kanalval vid olika kommunikationsbehov inom en kampanj</h2>
+                <ol>
+                    <li>Finansiering används som verktyg att nå målen för en kampanj. Sänds via SEO, nyhetsbrev och utvalda Some.</li>
+                    <li>En revolutionerande nyhet sänds ut av expertmyndigheten Vinnova. Sänds via SEO, Nyhetsbrev och utvalda Some. Läggs permament på webbar.</li>
+                    <li>Mobilisering sker via ett event som signaleras via SEO och utvalda Some. Läggs också permanment på webbar.</li>
+                </ol>
                 <p><img src="kanal-exempel.png" style="width:100%"></p>
             </div>
         </div>
@@ -103,7 +183,7 @@ var getUrlParameter = function getUrlParameter(sParam) {
     <div id="hubb" class="container" style="display:none;">
         <div class="row">
             <div class="col">
-                <div style="float:right; top:0px; position:relative"><a href="/">Hem</a></div>
+                <div style="float:right; top:0px; position:relative"><a href="/">Tillbaka till startsidan</a></div>
                 <h1>Kommunikationshubben <img id="linkedin-logo" src="linkedin.png"></h1>
             </div>
         </div>

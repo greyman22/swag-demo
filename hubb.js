@@ -169,7 +169,13 @@ const textRight3 = '">\
             });
 
             addListEventListeners();
+        }).catch((error) => {
+            if(confirm("Något gick fel. Ska accessToken-kakan tas bort? Fel: '" + error + "'")) {
+                setCookie("cf_accessToken","",-1);
+                alert("Kakan borta. Ladda om sidan för att mata in en ny accessToken");
+            }
         });
+            
     }
     
     $(document).ready(function() {

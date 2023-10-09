@@ -194,6 +194,22 @@ const textRight3 = '">\
             fetchEntries();       
         })
 
+        $("#b-linkedin").click(function() {
+            viewType = "LinkedIn";
+            $(".cell-a").css("background-color", "#0073B2");
+            $("#nyhetslista").html("");
+            $("#nyhetsbrev").html("");
+            fetchEntries();       
+        });
+
+        $("#b-nyhetsbrev").click(function() {
+            viewType = "Nyhetsbrev";
+            $(".cell-a").css("background-color", "#ffffff");
+            $("#nyhetslista").html("");
+            $("#nyhetsbrev").html("");
+            fetchEntries();       
+        });
+
 
         fetchEntries();
     });
